@@ -1,0 +1,57 @@
+version: '2'
+services:
+  mongo:
+    image: mongo
+    volumes:
+    - /opt/kong-mongo:/data/db
+  konga:
+    image: pantsel/konga:0.13.0
+    environment:
+      DB_ADAPTER: mongo
+      DB_DATABASE: konga
+      DB_HOST: mongo
+      NODE_ENV: production
+    links:
+    - kong:kong
+    - kong:kong.local
+    labels:
+      io.rancher.container.pull_image: always
+      io.rancher.scheduler.global: 'true'
+  kong-migration:
+    image: kong:0.14.1
+    environment:
+      KONG_DATABASE: postgres
+      KONG_PG_HOST: kong-database
+    tty: true
+    links:
+    - kong-database:kong-database.local
+    command:
+    - sh
+    - -c
+    - kong migrations up && sleep 30
+    labels:
+      io.rancher.container.start_once: 'true'
+  kong-database:
+    image: postgres:9.5
+    environment:
+      POSTGRES_DB: kong
+      POSTGRES_USER: kong
+    volumes:
+    - /opt/kong-postgres:/var/lib/postgresql/data
+  kong:
+    image: kong:0.14.1
+    environment:
+      KONG_ADMIN_ACCESS_LOG: /dev/stdout
+      KONG_ADMIN_ERROR_LOG: /dev/stderr
+      KONG_ADMIN_LISTEN: 0.0.0.0:8001
+      KONG_ADMIN_LISTEN_SSL: 0.0.0.0:8444
+      KONG_DATABASE: postgres
+      KONG_LOG_LEVEL: info
+      KONG_PG_HOST: kong-database
+      KONG_PROXY_ACCESS_LOG: /dev/stdout
+      KONG_PROXY_ERROR_LOG: /dev/stderr
+    links:
+    - kong-database:kong-database.local
+    labels:
+      io.rancher.container.pull_image: always
+      io.rancher.scheduler.global: 'true'
