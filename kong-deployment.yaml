@@ -1,31 +1,18 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  annotations:
-    io.rancher.container.pull_image: always
-    io.rancher.scheduler.global: "true"
-    kompose.cmd: kompose convert
-    kompose.version: 1.21.0 (992df58d8)
-  creationTimestamp: null
   labels:
-    io.kompose.service: kong
+    app: kong
   name: kong
 spec:
   replicas: 1
   selector:
     matchLabels:
-      io.kompose.service: kong
-  strategy: {}
+      app: kong
   template:
     metadata:
-      annotations:
-        io.rancher.container.pull_image: always
-        io.rancher.scheduler.global: "true"
-        kompose.cmd: kompose convert
-        kompose.version: 1.21.0 (992df58d8)
-      creationTimestamp: null
       labels:
-        io.kompose.service: kong
+        app: kong
     spec:
       containers:
       - env:
@@ -48,8 +35,16 @@ spec:
         - name: KONG_PROXY_ERROR_LOG
           value: /dev/stderr
         image: kong:0.14.1
-        imagePullPolicy: ""
         name: kong
+        ports:
+        - containerPort: 8000
+          protocol: TCP
+        - containerPort: 8001
+          protocol: TCP
+        - containerPort: 8443
+          protocol: TCP
+        - containerPort: 8444
+          protocol: TCP
       restartPolicy: Always
-      serviceAccountName: ""
+     
       
