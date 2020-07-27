@@ -28,20 +28,22 @@ spec:
         io.kompose.service: konga
     spec:
       containers:
-      - env:
-        - name: DB_ADAPTER
-          value: mongo
-        - name: DB_DATABASE
-          value: konga
-        - name: DB_HOST
-          value: mongo
-        - name: NODE_ENV
-          value: production
-        image: pantsel/konga:0.13.0
-        imagePullPolicy: ""
-        name: konga
-        resources: {}
-      restartPolicy: Always
-      serviceAccountName: ""
-      volumes: null
-status: {}
+        - env:
+          - name: DB_ADAPTER
+            value: mongo
+          - name: DB_DATABASE
+            value: konga
+          - name: DB_HOST
+            value: mongo
+          - name: NODE_ENV
+            value: production
+          image: pantsel/konga:0.13.0
+          name: konga
+          volumeMounts:
+              - mountPath: /app/kongadata
+                name: kongadbdata
+      volumes:
+        - name: kongadbdata
+          persistentVolumeClaim:
+            claimName: kongadbdata  
+  

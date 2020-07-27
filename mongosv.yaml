@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    field.cattle.io/creatorId: user-n228z
+    field.cattle.io/ipAddresses: "null"
+    field.cattle.io/targetDnsRecordIds: "null"
+    field.cattle.io/targetWorkloadIds: "null"
+  creationTimestamp: "2020-07-26T21:22:48Z"
+  labels:
+    cattle.io/creator: norman
+  name: mongo
+  namespace: default
+  resourceVersion: "12597062"
+  selfLink: /api/v1/namespaces/default/services/mongo
+  uid: e3a4fe26-d588-4ce7-94cd-74fec69faafb
+spec:
+  clusterIP: None
+  ports:
+  - name: default
+    port: 27017
+    protocol: TCP
+    targetPort: 27017
+  selector:
+    app: mongo
+  sessionAffinity: None
+  type: ClusterIP
+status:
+  loadBalancer: {}
